@@ -10,6 +10,13 @@ public class RobotMovement : MonoBehaviour
     private float moveInput;
     private float turnInput;
 
+    private void Start()
+    {
+        MyVector3 v = new MyVector3 (3f, 4f, 0f);
+        v = v.Normalize();
+        Debug.Log(v.x + " " + v.Magnitude());
+    }
+
     void Update()
     {
         moveInput = 0f;
@@ -23,19 +30,21 @@ public class RobotMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 dir = cam.transform.forward;
+        MyVector3 dir = cam.transform.forward;
         dir.y = 0f;
-        dir.Normalize();
+        dir = dir.Normalize();
 
-        Vector3 targetVelocity = dir * (moveInput * forwardAcceleration);
-        rb.linearVelocity = new Vector3(targetVelocity.x, rb.linearVelocity.y, targetVelocity.z);
+        MyVector3 targetVelocity = dir * (moveInput * forwardAcceleration);
+        rb.linearVelocity = new MyVector3(targetVelocity.x, rb.linearVelocity.y, targetVelocity.z);
 
-        //HAY QUE CAMVBIAR UNA VEZ IMPLEMENTADOS LOS SCRIPTS DEL RODRIGO DE QUATERNIONSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
         if (turnInput != 0f)
         {
-            float turnAmount = turnInput * turningVelocity * Time.fixedDeltaTime;
-            Quaternion deltaRotation = Quaternion.Euler(0f, turnAmount, 0f);
-            rb.MoveRotation(rb.rotation * deltaRotation);
+            float angle = turnInput * turningVelocity * Time.fixedDeltaTime * (MyMath.PI / 180f);
+
+            MyQuaternion current = rb.rotation;                    // Quaternion -> MyQuaternion
+            MyQuaternion delta = new MyQuaternion(Vector3.up, angle);
+
+            rb.MoveRotation((MyQuaternion.Multiply(current, delta)).Normalize());        // MyQuaternion -> Quaternion
         }
     }
 }
