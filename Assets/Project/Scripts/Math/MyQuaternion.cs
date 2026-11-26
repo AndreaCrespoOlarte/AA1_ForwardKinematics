@@ -90,4 +90,13 @@ public struct MyQuaternion {
         return new MyQuaternion(a.w + b.w, a.x + b.x, a.y + b.y, a.z + b.z);
     }
 
+    public static implicit operator Quaternion(MyQuaternion q)
+    {
+        return new Quaternion(q.x, q.y, q.z, q.w);   // Unity order: x, y, z, w
+    }
+
+    public static implicit operator MyQuaternion(Quaternion q)
+    {
+        return new MyQuaternion(q.w, q.x, q.y, q.z); // yours: w, x, y, z
+    }
 }
